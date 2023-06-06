@@ -81,11 +81,12 @@ public class StudentController {
 
 
     // Handler method to handle delete student request
-//    @GetMapping("/students/{studentId}/delete")
-//    public String deleteStudent(@PathVariable("studentId") Long studentId){
-//        studentService.deleteStudent(studentId);
-//        return "redirect:/students";
-//    }
+    @GetMapping("/students/{studentId}/delete")
+    public String deleteStudent(@PathVariable("studentId") Long studentId){
+        studentService.deleteStudent(studentId);
+        return "redirect:/students";
+    }
+
 //
 //    // Handler method to handle view student request
 //    @GetMapping("/students/{studentId}/view")
