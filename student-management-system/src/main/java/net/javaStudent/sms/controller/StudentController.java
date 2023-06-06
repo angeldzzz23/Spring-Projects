@@ -3,9 +3,12 @@ package net.javaStudent.sms.controller;
 import net.javaStudent.sms.Service.StudentService;
 import net.javaStudent.sms.dto.StudentDto;
 import net.javaStudent.sms.entity.Student;
+import net.javaStudent.sms.mapper.StudentMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -34,5 +37,18 @@ public class StudentController {
         model.addAttribute("student", studentDto);
         return "create_student";
     }
+
+    @PostMapping("/students")
+    public String saveStudent(@ModelAttribute("student") StudentDto student) {
+        studentService.createStudent(student);
+        return "redirect:/students";
+    }
+
+
+    // handler method to handle save student form submisssion
+//    @Override
+//    public void createStudents(StudentDto studentDto) {
+//        Student student = StudentMapper.mapToStudent(studentDto);
+//    }
 
 }
