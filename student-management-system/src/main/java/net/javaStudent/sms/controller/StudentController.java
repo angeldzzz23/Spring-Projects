@@ -1,10 +1,12 @@
 package net.javaStudent.sms.controller;
 
+import jakarta.validation.Valid;
 import net.javaStudent.sms.Service.StudentService;
 import net.javaStudent.sms.dto.StudentDto;
 import net.javaStudent.sms.entity.Student;
 import net.javaStudent.sms.mapper.StudentMapper;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -39,7 +41,14 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    public String saveStudent(@ModelAttribute("student") StudentDto student) {
+    public String saveStudent(@Valid @ModelAttribute("student") StudentDto student, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("student", student);
+            return "create_student";
+
+        }
+
         studentService.createStudent(student);
         return "redirect:/students";
     }
