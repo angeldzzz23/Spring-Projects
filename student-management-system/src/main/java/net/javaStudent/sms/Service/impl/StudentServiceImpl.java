@@ -48,4 +48,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
 
+    @Override
+    public void updateStudent(StudentDto studentDto) {
+        studentRepository.save(StudentMapper.mapToStudent(studentDto));
+
+    }
+
+
 }
