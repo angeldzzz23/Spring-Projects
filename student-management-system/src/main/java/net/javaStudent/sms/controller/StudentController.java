@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -53,11 +54,16 @@ public class StudentController {
         return "redirect:/students";
     }
 
+    // handle method to handle edit student request
+    @GetMapping("/students/{studentId}/edit")
+    public String editStudent(@PathVariable("studentId") Long studentId, Model model) {
 
-    // handler method to handle save student form submisssion
-//    @Override
-//    public void createStudents(StudentDto studentDto) {
-//        Student student = StudentMapper.mapToStudent(studentDto);
-//    }
+        StudentDto student = studentService.getStudentById(studentId);
+
+        model.addAttribute("student", student);
+
+        return "edit_student";
+
+    }
 
 }
