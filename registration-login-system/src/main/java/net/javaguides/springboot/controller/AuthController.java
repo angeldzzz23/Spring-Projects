@@ -30,9 +30,9 @@ public class AuthController {
         return "index";
     }
 
-    // handler method to handle login request
+    // handle method to handle login request
     @GetMapping("/login")
-    public String login(){
+    public String login() {
         return "login";
     }
 
