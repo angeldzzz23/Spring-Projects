@@ -28,12 +28,18 @@ public class EmployeeController {
     }
 
     // build reactive get all employeesDto
-    @GetMapping
+    @GetMapping()
     public Flux<EmployeeDto> getAllEmployee() {
         return employeeService.getAllEmployees();
     }
 
+    // Build Reactive Updated Employee REST
+    @PutMapping("{id}")
+    public Mono<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto,
+                                            @PathVariable("id") String employeeId) {
 
+        return employeeService.updateEmployee(employeeDto, employeeId);
+    }
 
 
 }
