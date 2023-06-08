@@ -5,6 +5,7 @@ import net.employee.springbootwebfluxtutorial.dto.EmployeeDto;
 import net.employee.springbootwebfluxtutorial.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -25,6 +26,13 @@ public class EmployeeController {
     public Mono<EmployeeDto> getEmployee(@PathVariable("id") String employeeId) {
         return employeeService.getEmployee(employeeId);
     }
+
+    // build reactive get all employeesDto
+    @GetMapping
+    public Flux<EmployeeDto> getAllEmployee() {
+        return employeeService.getAllEmployees();
+    }
+
 
 
 
