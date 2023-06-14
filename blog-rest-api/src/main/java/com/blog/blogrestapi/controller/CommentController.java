@@ -50,6 +50,13 @@ public class CommentController {
       return new ResponseEntity<>(updatedComment, HttpStatus.OK);
     }
 
+    public ResponseEntity<String> deleteComment(@PathVariable(value = "postId") Long postId,
+                                                @PathVariable(value = "id") Long commentId) {
+      commentService.deleteComment(postId, commentId);
+      return new ResponseEntity<>("Comment Deleted Sucessfully", HttpStatus.OK);
+
+    }
+
 
 
 
