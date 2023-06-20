@@ -4,14 +4,13 @@ import com.blog.blogrestapi.exception.BlogAPIException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-
 @Component
 public class JwtTokenProvider {
 
@@ -21,9 +20,9 @@ public class JwtTokenProvider {
     @Value("${app-jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
 
-    // generate jwt token
-    public String generateToken(Authentication authentication) {
-        String username = authentication.name();
+    // generate JWT token
+    public String generateToken(Authentication authentication){
+        String username = authentication.getName();
 
         Date currentDate = new Date();
 
@@ -35,32 +34,29 @@ public class JwtTokenProvider {
                 .setExpiration(expireDate)
                 .signWith(key())
                 .compact();
-
         return token;
     }
 
-    private Key key() {
+    private Key key(){
         return Keys.hmacShaKeyFor(
                 Decoders.BASE64.decode(jwtSecret)
         );
     }
 
-    // get username fromm jwt token
-    public String getUsername(String token) {
+    // get username from Jwt token
+    public String getUsername(String token){
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
         String username = claims.getSubject();
-
         return username;
     }
 
-    // validate Jet token
-    public boolean validateToken(String token) {
-
-        try {
+    // validate Jwt token
+    public boolean validateToken(String token){
+        try{
             Jwts.parserBuilder()
                     .setSigningKey(key())
                     .build()
@@ -71,14 +67,9 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException ex) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Expired JWT token");
         } catch (UnsupportedJwtException ex) {
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Unsupported JWT Token");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "JTW claims string is empty");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "JWT claims string is empty.");
         }
-
-
     }
-
-
-
 }

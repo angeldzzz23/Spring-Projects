@@ -8,7 +8,9 @@ import com.blog.blogrestapi.payload.LoginDto;
 import com.blog.blogrestapi.payload.RegisterDto;
 import com.blog.blogrestapi.repository.RoleRepository;
 import com.blog.blogrestapi.repository.UserRepository;
+import com.blog.blogrestapi.security.JwtTokenProvider;
 import com.blog.blogrestapi.service.serviceImpl.AuthService;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Set;
 
+
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -27,48 +30,49 @@ public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
 
 
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
-
-//    public AuthServiceImpl(AuthenticationManager authenticationManager) {
-//        this.authenticationManager = authenticationManager;
-//    }
 
     @Override
     public String login(LoginDto loginDto) {
 
-       Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-           loginDto.getUsernameOrEmail(), loginDto.getPassword()
-        ));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return "user is logged-in Successfully!.";
-    }
 
+
+        String token = jwtTokenProvider.generateToken(authentication);
+
+        return token;
+    }
 
     @Override
     public String register(RegisterDto registerDto) {
 
-        // check for username that exists in database
-        if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "username already exists!");
+        // add check for username exists in database
+        if(userRepository.existsByUsername(registerDto.getUsername())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Username is already exists!.");
         }
 
-        // check for email in database
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "email already exists!");
+        // add check for email exists in database
+        if(userRepository.existsByEmail(registerDto.getEmail())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Email is already exists!.");
         }
-        //
+
         User user = new User();
         user.setName(registerDto.getName());
         user.setUsername(registerDto.getUsername());
@@ -80,6 +84,8 @@ public class AuthServiceImpl implements AuthService {
         roles.add(userRole);
         user.setRoles(roles);
 
-        return "User Registered sucessfully";
+        userRepository.save(user);
+
+        return "User registered successfully!.";
     }
 }
