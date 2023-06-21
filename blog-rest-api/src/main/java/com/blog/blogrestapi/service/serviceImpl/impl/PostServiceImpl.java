@@ -108,6 +108,20 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
+    // TODO:
+    @Override
+    public List<PostDto> getPostsByCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+
+        List<Post> posts = postRepository.findByCategoryId(categoryId);
+
+        return posts.stream().map((post) -> mapToDTO(post))
+                .collect(Collectors.toList());
+
+
+    }
+
     private PostDto mapToDTO(Post post) {
         PostDto postDto = mapper.map(post, PostDto.class);
 
