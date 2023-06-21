@@ -1,6 +1,7 @@
 package com.blog.blogrestapi.controller;
 
 import com.blog.blogrestapi.entity.Comment;
+import com.blog.blogrestapi.payload.CategoryDto;
 import com.blog.blogrestapi.payload.CommentDto;
 import com.blog.blogrestapi.service.serviceImpl.CommentService;
 import jakarta.validation.Valid;
@@ -57,6 +58,8 @@ public class CommentController {
       return new ResponseEntity<>("Comment Deleted Sucessfully", HttpStatus.OK);
 
     }
+
+    // updating category
 
 
 

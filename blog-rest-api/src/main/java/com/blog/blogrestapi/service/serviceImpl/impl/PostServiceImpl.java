@@ -1,9 +1,11 @@
 package com.blog.blogrestapi.service.serviceImpl.impl;
 
+import com.blog.blogrestapi.entity.Category;
 import com.blog.blogrestapi.entity.Post;
 import com.blog.blogrestapi.exception.ResourceNotFoundException;
 import com.blog.blogrestapi.payload.PostDto;
 import com.blog.blogrestapi.payload.PostResponse;
+import com.blog.blogrestapi.repository.CategoryRepository;
 import com.blog.blogrestapi.repository.PostRepository;
 import com.blog.blogrestapi.service.serviceImpl.PostService;
 import org.modelmapper.ModelMapper;
@@ -23,27 +25,29 @@ public class PostServiceImpl implements PostService {
 
     private ModelMapper mapper;
 
-    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
+    private CategoryRepository categoryRepository;
+
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper,
+                           CategoryRepository categoryRepository) {
         this.postRepository = postRepository;
         this.mapper = mapper;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
     public PostDto createPost(PostDto postDto) {
 
-        // convert Dto to entity
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
+        Category category = categoryRepository.findById(postDto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("category", "id", postDto.getCategoryId()));
 
 
+        // convert dto to entity
+        Post post = mapToEntity(postDto);
+        post.setCategory(category);
         Post newPost = postRepository.save(post);
 
         // convert entity to Dto
         PostDto postResponse = mapToDTO(newPost);
-
-
 
         return postResponse;
     }
