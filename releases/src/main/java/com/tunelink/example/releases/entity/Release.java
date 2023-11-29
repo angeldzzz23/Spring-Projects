@@ -45,6 +45,17 @@ public class Release {
     )
     private Set<Artist> artists = new HashSet<>();
 
+
+    @ManyToMany
+    @JoinTable(
+            name = "release_genres",
+            joinColumns = @JoinColumn(name = "release_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<Genre> genres = new HashSet<>();
+
+
+
 }
 
 
