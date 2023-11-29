@@ -16,7 +16,7 @@ public class ReleaseDTO {
     private long type;
     private HashSet<ArtistsDTO> artists;
     private HashSet<GenreDTO> genres;
-
+    private long releaseStatus;
 
     public ReleaseDTO(long id, String title, String date) {
         this.id = id;
@@ -52,7 +52,6 @@ public class ReleaseDTO {
     public void setId(long id) {
         this.id = id;
     }
-
 
     public void setTitle(String title) {
         this.title = title;

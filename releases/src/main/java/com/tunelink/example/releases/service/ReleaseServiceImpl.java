@@ -1,18 +1,12 @@
 package com.tunelink.example.releases.service;
 
-import com.tunelink.example.releases.entity.Artist;
-import com.tunelink.example.releases.entity.Genre;
-import com.tunelink.example.releases.entity.Release;
-import com.tunelink.example.releases.entity.ReleaseType;
+import com.tunelink.example.releases.entity.*;
 import com.tunelink.example.releases.exception.ResourceNotFoundException;
 import com.tunelink.example.releases.payload.ArtistsDTO;
 import com.tunelink.example.releases.payload.GenreDTO;
 import com.tunelink.example.releases.payload.ReleaseDTO;
 import com.tunelink.example.releases.payload.ReleaseResponse;
-import com.tunelink.example.releases.repository.ArtistRepository;
-import com.tunelink.example.releases.repository.GenreRepository;
-import com.tunelink.example.releases.repository.ReleaseRepository;
-import com.tunelink.example.releases.repository.ReleaseTypeRepository;
+import com.tunelink.example.releases.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -26,16 +20,18 @@ public class ReleaseServiceImpl implements  ReleaseService {
     private ReleaseTypeRepository releaseTypeRepository;
     private ArtistRepository artistRepository;
     private GenreRepository genreRepository;
+    private ReleaseStatusRepository releaseStatusRepository;
 
 
     public ReleaseServiceImpl(ReleaseRepository releaseRepository,ReleaseTypeRepository releaseTypeRepository,
-                              ArtistRepository artistRepository, GenreRepository genreRepository) {
+                              ArtistRepository artistRepository, GenreRepository genreRepository,
+                              ReleaseStatusRepository releaseStatusRepository) {
         this.releaseRepository = releaseRepository;
         this.releaseTypeRepository = releaseTypeRepository;
         this.artistRepository = artistRepository;
         this.genreRepository = genreRepository;
+        this.releaseStatusRepository = releaseStatusRepository;
     }
-
 
 
     @Override
@@ -51,15 +47,13 @@ public class ReleaseServiceImpl implements  ReleaseService {
     }
 
 
-    //
+    // TODO:
     @Override
     public ReleaseDTO updateRelease(ReleaseDTO releaseDTO, long id) {
 
         Release release = (Release)this.releaseRepository.findById(id).orElseThrow(() -> {
            return  new ResourceNotFoundException("Release", "id", id);
         });
-
-
 
 
 
@@ -109,6 +103,11 @@ public class ReleaseServiceImpl implements  ReleaseService {
             release.setReleaseType(releaseType);
         }
 
+        if (releaseDTO.getReleaseStatus() != 0) {
+            ReleaseStatus releaseStatus = retrieveReleaseStatus(releaseDTO.getReleaseStatus());
+            release.setReleaseStatus(releaseStatus);
+        }
+
         // saving the artists
         if (releaseDTO.getArtists() != null && !releaseDTO.getArtists().isEmpty()) {
             Set<Artist> artists = new HashSet<>();
@@ -142,6 +141,11 @@ public class ReleaseServiceImpl implements  ReleaseService {
         return this.artistRepository.findById(artistId).orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
     }
 
+    private ReleaseStatus retrieveReleaseStatus(Long releaseStatusId) {
+        return this.releaseStatusRepository.findById(releaseStatusId).orElseThrow(() -> new ResourceNotFoundException("ReleaseStatus", "id", releaseStatusId));
+//
+    }
+
     private ReleaseDTO mapToDTO(Release release) {
         ReleaseDTO releaseDTO =  new ReleaseDTO();
         releaseDTO.setTitle(release.getTitle());
@@ -152,6 +156,11 @@ public class ReleaseServiceImpl implements  ReleaseService {
         if (release.getReleaseType() != null) {
             releaseDTO.setType(release.getReleaseType().getId());
         }
+        // sets the release status
+        if (release.getReleaseStatus() != null) {
+            releaseDTO.setReleaseStatus(release.getReleaseStatus().getId());
+        }
+
 
         // making sure that there are artist an it's not empty
         if (release.getArtists() != null && !release.getArtists().isEmpty()) {

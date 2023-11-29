@@ -37,6 +37,11 @@ public class Release {
     @JoinColumn(name = "release_type_id", nullable = true)
     private ReleaseType releaseType;
 
+    // added
+    @ManyToOne
+    @JoinColumn(name = "release_status_id", nullable = true)
+    private  ReleaseStatus releaseStatus;
+
     @ManyToMany
     @JoinTable(
             name = "release_artists",
