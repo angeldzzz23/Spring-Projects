@@ -11,6 +11,7 @@ public class ReleaseDTO {
     private String title; // title of the release
     private String release_date; //
     private String imgUrl;
+    private long type;
 
     public ReleaseDTO(long id, String title, String date) {
         this.id = id;
@@ -26,6 +27,14 @@ public class ReleaseDTO {
         return id;
     }
 
+    public long getType() {
+        return this.type;
+    }
+
+    public void setType(long id) {
+        this.type = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -39,6 +48,7 @@ public class ReleaseDTO {
         this.id = id;
     }
 
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -46,4 +56,6 @@ public class ReleaseDTO {
     public void setDate(String date) {
         this.release_date = date;
     }
+
+
 }

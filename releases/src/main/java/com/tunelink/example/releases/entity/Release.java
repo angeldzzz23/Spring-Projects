@@ -33,15 +33,9 @@ public class Release {
     @Column(name = "imgUrl", nullable = true)
     private String imgUrl;
 
-    // TODO: releaseType
-
-    // what does cascade mean?
-    @OneToOne(mappedBy = "release", cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+    @ManyToOne
+    @JoinColumn(name = "release_type_id", nullable = true)
     private ReleaseType releaseType;
-
-
-
-
 
 }
 
