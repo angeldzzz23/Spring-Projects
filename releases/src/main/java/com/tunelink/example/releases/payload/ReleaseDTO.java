@@ -1,5 +1,6 @@
 package com.tunelink.example.releases.payload;
 
+import com.tunelink.example.releases.entity.Genre;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -14,6 +15,7 @@ public class ReleaseDTO {
     private String imgUrl;
     private long type;
     private HashSet<ArtistsDTO> artists;
+    private HashSet<GenreDTO> genres;
 
 
     public ReleaseDTO(long id, String title, String date) {

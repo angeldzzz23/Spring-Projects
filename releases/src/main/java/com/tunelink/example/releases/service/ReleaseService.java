@@ -12,7 +12,5 @@ public interface ReleaseService {
 
 
 
-    // delete a releas e
-
 
 }

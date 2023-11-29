@@ -1,13 +1,16 @@
 package com.tunelink.example.releases.service;
 
 import com.tunelink.example.releases.entity.Artist;
+import com.tunelink.example.releases.entity.Genre;
 import com.tunelink.example.releases.entity.Release;
 import com.tunelink.example.releases.entity.ReleaseType;
 import com.tunelink.example.releases.exception.ResourceNotFoundException;
 import com.tunelink.example.releases.payload.ArtistsDTO;
+import com.tunelink.example.releases.payload.GenreDTO;
 import com.tunelink.example.releases.payload.ReleaseDTO;
 import com.tunelink.example.releases.payload.ReleaseResponse;
 import com.tunelink.example.releases.repository.ArtistRepository;
+import com.tunelink.example.releases.repository.GenreRepository;
 import com.tunelink.example.releases.repository.ReleaseRepository;
 import com.tunelink.example.releases.repository.ReleaseTypeRepository;
 import org.springframework.stereotype.Service;
@@ -22,12 +25,15 @@ public class ReleaseServiceImpl implements  ReleaseService {
     private ReleaseRepository releaseRepository;
     private ReleaseTypeRepository releaseTypeRepository;
     private ArtistRepository artistRepository;
+    private GenreRepository genreRepository;
 
 
-    public ReleaseServiceImpl(ReleaseRepository releaseRepository,ReleaseTypeRepository releaseTypeRepository, ArtistRepository artistRepository) {
+    public ReleaseServiceImpl(ReleaseRepository releaseRepository,ReleaseTypeRepository releaseTypeRepository,
+                              ArtistRepository artistRepository, GenreRepository genreRepository) {
         this.releaseRepository = releaseRepository;
         this.releaseTypeRepository = releaseTypeRepository;
         this.artistRepository = artistRepository;
+        this.genreRepository = genreRepository;
     }
 
 
@@ -103,6 +109,7 @@ public class ReleaseServiceImpl implements  ReleaseService {
             release.setReleaseType(releaseType);
         }
 
+        // saving the artists
         if (releaseDTO.getArtists() != null && !releaseDTO.getArtists().isEmpty()) {
             Set<Artist> artists = new HashSet<>();
 
@@ -113,12 +120,26 @@ public class ReleaseServiceImpl implements  ReleaseService {
             release.setArtists(artists);
         }
 
+        // saving the genres
+        if (releaseDTO.getGenres() != null && !releaseDTO.getGenres().isEmpty()) {
+            Set<Genre> genres = new HashSet<>();
+
+            for (GenreDTO genreDTO : releaseDTO.getGenres()) {
+                  Genre genre = retrieveGenres(genreDTO.getId());
+                genres.add(genre);
+            }
+            release.setGenres(genres);
+        }
+
         return  release;
     }
 
+    private Genre retrieveGenres(Long genreId) {
+        return this.genreRepository.findById(genreId).orElseThrow(() -> new ResourceNotFoundException("genreId", "id", genreId));
+    }
 
     private Artist retrieveArtist(Long artistId) {
-        return this.artistRepository.findById(artistId).orElseThrow(() -> new ResourceNotFoundException("ReleaseType", "id", artistId));
+        return this.artistRepository.findById(artistId).orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
     }
 
     private ReleaseDTO mapToDTO(Release release) {
@@ -145,12 +166,23 @@ public class ReleaseServiceImpl implements  ReleaseService {
             }
 
             releaseDTO.setArtists((HashSet<ArtistsDTO>) artists);
-//            releaseDTO.set
         }
 
+        // setting the genres
+        // can probably set the title here as well
+        if (release.getGenres() != null && !release.getGenres().isEmpty()) {
 
+            Set<GenreDTO> genresDTO = new HashSet<>();
 
+            for (Genre genre : release.getGenres()) {
+                GenreDTO genreDto =  new GenreDTO();
+                genreDto.setId(genre.getId());
+                genresDTO.add(genreDto);
+            }
 
+            releaseDTO.setGenres((HashSet<GenreDTO>) genresDTO);
+
+        }
 
 
 
