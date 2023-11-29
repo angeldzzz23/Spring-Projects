@@ -2,6 +2,7 @@ package com.tunelink.example.releases.payload;
 
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -12,6 +13,8 @@ public class ReleaseDTO {
     private String release_date; //
     private String imgUrl;
     private long type;
+    private HashSet<ArtistsDTO> artists;
+
 
     public ReleaseDTO(long id, String title, String date) {
         this.id = id;

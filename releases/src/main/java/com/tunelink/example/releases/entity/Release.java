@@ -37,10 +37,17 @@ public class Release {
     @JoinColumn(name = "release_type_id", nullable = true)
     private ReleaseType releaseType;
 
+    @ManyToMany
+    @JoinTable(
+            name = "release_artists",
+            joinColumns = @JoinColumn(name = "release_id"),
+            inverseJoinColumns = @JoinColumn(name = "artist_id")
+    )
+    private Set<Artist> artists = new HashSet<>();
+
 }
 
 
-// TODO: Artists
 
 // TODO: Status
 
